@@ -86,7 +86,6 @@ input{
 }
 
 
-
 button{
     border: .2rem solid #134e4a;
     outline: none;
@@ -209,6 +208,7 @@ span{
 h1{
     text-align: center;
     color: #8bebf5;
+    text-transform: uppercase;
 }
 
 .post{
@@ -230,3 +230,13 @@ img{
 
 }
 
+.title{
+    font-size: 1.5rem;
+}
+
+#time{
+    float: right;
+    color: #8bebf5;
+    padding-right: 2rem;
+    padding-bottom: 2rem;
+}

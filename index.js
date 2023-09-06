@@ -4,6 +4,7 @@ const ejs = require("ejs");
 const path = require("path");
 const bodyParser = require("body-parser");
 const { body, validationResult, checkSchema, matchedData } = require("express-validator");
+const session = require("express-session")
 
 
 
@@ -18,12 +19,19 @@ app.set('views', path.join(__dirname, "Views"));
 //default route ...get
 app.get('', function (req, res) {
     let err = " ";
-    const data = ""
+    const data = "";
+    const session = req.session
     res.render("login", { err, data });
 
 });
 
-
+app.use(session({
+    secret: "SECRET",
+cookie:{
+    name:"sid",
+},
+// user:{}
+}));
 const schmea = {
     USERNAME: { trim: true, 
         isAlpha: { options: ['en-US', { ignore: [" "] }], errorMessage: '**Number Input Not Needed**' } },
@@ -38,13 +46,22 @@ app.post("", checkSchema(schmea),
         const Error = result.errors
         // const details = require("./data.json");
         let err = {};
+        
 
         Error.forEach(item => {
             err[item.path] = item.msg
         });
         const data = req.body;
         const x = matchedData(req);
-        
+        req.session.user = {
+            Username: data.USERNAME,
+            time : new Date().toLocaleString(),
+        };
+        // const session = req.session;
+        // const user = {}
+        //  user.Username = data.USERNAME;
+        //  user.time = new Date().toLocaleDateString();
+        //  session.user = user;
         // console.log(result.isEmpty(), x)
         if (result.isEmpty()) {
             // return res.redirect('dashboard')
@@ -97,8 +114,12 @@ app.post("/signup",
 
     app.get("/dashboard", function(req, res){
             const details = require("./data.json");
-            console.log(details)
-                res.render("dashboard", details)
+            const result = details.results
+
+            const session = req.session.user;
+        
+           
+                res.render("dashboard", {result, session})
     });
 
     app.get("/:id", function(req, res){
